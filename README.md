@@ -138,3 +138,5 @@ php artisan check:fuel //Run the Fuel check and send notifications if required
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 
+### Administration Back End
+A Back end is added using tcg/voyager. See here ... https://github.com/the-control-group/voyager
