@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Structure;
+use App\StructureService;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +17,32 @@ use Illuminate\Http\Request;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::get('structures', function() {
+    if ( \Auth::guard('api')->getTokenForRequest() <> env('API_BEARER_TOKEN','')) return response()->json(['error' => 'Not Authorized'], 401);;
+
+    // return a list of all structures
+    return Structure::get(['structure_name','type_name']);
+});
+
+Route::get('states', function() {
+    if ( \Auth::guard('api')->getTokenForRequest() <> env('API_BEARER_TOKEN','')) return response()->json(['error' => 'Not Authorized'], 401);;
+
+    // return a list of all structures
+    return Structure::get(['structure_name','type_name','state']);
+});
+
+Route::get('services', function() {
+    if ( \Auth::guard('api')->getTokenForRequest() <> env('API_BEARER_TOKEN','')) return response()->json(['error' => 'Not Authorized'], 401);;
+
+    // Return a list of Online Services
+    return StructureService::where('state','LIKE', '%online%')->get();
+});
+
+Route::get('clonebays', function() {
+    if ( \Auth::guard('api')->getTokenForRequest() <> env('API_BEARER_TOKEN','')) return response()->json(['error' => 'Not Authorized'], 401);;
+
+    // Return a list of Online Clone Bays
+    return StructureService::where('state','LIKE', '%online%', 'AND', 'name', 'LIKE', '%clone%')->get();
 });

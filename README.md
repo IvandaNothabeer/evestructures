@@ -140,3 +140,17 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ### Administration Back End
 A Back end is added using tcg/voyager. See here ... https://github.com/the-control-group/voyager
+for detail instructions on how to install
+```
+php artisan migrate
+php artisan voyager:install
+```
+
+### JSON API
+Added a simple API to return limited information via an API
+- Uses Bearer Token Authentication. So NO, It's not secure! Use https and keep the token secret
+- Set the Brearer token in .env
+
+Supported api calls can be found in /routes/api.php
+
+Note, this function is incomplete and duplikcate structures will be returned.
