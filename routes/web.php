@@ -43,3 +43,8 @@ Route::get('/account/delete', 'HomeController@deleteAccount');
 
 Route::post('/webhook/{character_id}', 'WebhookController@store');
 Route::delete('/webhook/delete/{character_id}', 'WebhookController@destroy');
+
+
+Route::group(['prefix' => 'admin'], function () {
+    Voyager::routes();
+});
