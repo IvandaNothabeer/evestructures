@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Schema;
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
+    * Bootstrap any application services.
+    *
+    * @return void
+    */
     public function boot()
     {
         //
@@ -19,12 +19,14 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register any application services.
-     *
-     * @return void
-     */
+    * Register any application services.
+    *
+    * @return void
+    */
     public function register()
     {
-        //
+        if ($this->app->environment() == 'local') {
+            $this->app->register('Laracasts\Generators\GeneratorsServiceProvider');
+        }
     }
 }

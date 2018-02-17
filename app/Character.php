@@ -7,12 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Character extends Model
 {
-  use Notifiable;
+    use Notifiable;
 
-  protected $guarded = [];
+    protected $guarded = [];
     //
-  public function routeNotificationForDiscord() {
-    $this->discord_webhook;
-  }
-    
+    public function routeNotificationForDiscord() {
+        $this->discord_webhook;
+    }
+
+    /**
+    * The structures that belong to the character.
+    */
+    public function structures()
+    {
+        return $this->belongsToMany('App\Structure');
+    }
+
 }

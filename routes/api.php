@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use App\Structure;
 use App\StructureService;
+use App\Character;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,4 +46,12 @@ Route::get('clonebays', function() {
 
     // Return a list of Online Clone Bays
     return StructureService::where('state','LIKE', '%online%', 'AND', 'name', 'LIKE', '%clone%')->get();
+});
+
+Route::get('characters', function() {
+    //if ( \Auth::guard('api')->getTokenForRequest() <> env('API_BEARER_TOKEN','')) return response()->json(['error' => 'Not Authorized'], 401);;
+
+    // Return a list of Online Clone Bays
+    return Character::with('structures')->get();
+    
 });
