@@ -7,7 +7,7 @@
 <div class="container">
   <div class="blog-main">
     <div class="panel panel-primary">
-      <div class="panel-heading"><h3 class="panel-title"><strong>Edit /resources/views/layouts/welcome.blade.structures.php and place your welcome message here</strong></h3></div>
+      <div class="panel-heading"><h3 class="panel-title"><strong>@php echo env("APP_WELCOME_HEADER", "Set Welcome Message in .env")@endphp</strong></h3></div>
         <div class="panel-body">
         </div>
     </div>
