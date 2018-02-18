@@ -145,11 +145,19 @@ for detail instructions on how to install
 php artisan migrate
 php artisan voyager:install
 ```
+ - Log in to the admin backend at <yoursite>/admin and check all is running. if you cannot log in to the admin
+ interface, got to the Users table and set the "role" to 1.
+ - Import the Default Backend Configuration file from \database\migrations\DefaultAdminConfig.sql
 
+ The default backend configiuration comes with 3 user roles.
+  - Admin has access to everything, including changing the BREAD and Menu configurations
+  - Manager has view access to all of the structures in the database
+  - User has no access to any of the back end functions and can only view thier own structures on the Home page
+  
 Details on how to build a BREAD interface are on the voyager website. You can configure the BREAD menus and displays however you wish. 
 
-Note that its a BAD IDEA to delete the default BREAD configuration because that can bread all sorts of unexpected things. 
-Also, for the same reason, be care full deleting menu items.
+Note that its a BAD IDEA to delete the default BREAD configurations because that can break all sorts of unexpected things. 
+Also, for the same reason, be careful deleting menu items.
 
 The standard BREAD view has been modified slightly to make relationships work properly with evestructures. 
 After creating a BREAD, you can create a relationship to a related record. Eg. To Show a Structure Name ....
@@ -162,7 +170,7 @@ After creating a BREAD, you can create a relationship to a related record. Eg. T
 ### JSON API
 Added a simple API to return limited information via an API
 - Uses Bearer Token Authentication. So NO, It's not secure! Use https and keep the token secret
-- Set the Brearer token in .env
+- Set the Bearer token in .env
 
 Supported api calls can be found in /routes/api.php
 
