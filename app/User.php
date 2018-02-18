@@ -32,9 +32,9 @@ class User extends \TCG\Voyager\Models\User
       return $this->hasMany(Character::class);
     }
 
-    public function structures() {
-      return $this->hasMany(Structure::class);
-    }
+    //public function structures() {
+    //  return $this->hasMany(Structure::class);
+    //}
 
 
 }

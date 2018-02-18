@@ -23,14 +23,14 @@ class StructureController extends Controller
   }
 
   public function show($structure_id) {
-    $structure = Structure::where('user_id', \Auth::id())->where('structure_id', $structure_id)->first();
+    $structure = Structure::where('structure_id', $structure_id)->first();
     if(is_null($structure)) {
       $alert = "Structure not found on this account";
       return redirect()->to('/home')->with('alert', [$alert]);
     }
-    $services = StructureService::where('character_id', $structure->character_id)->where('structure_id', $structure_id)->get();
-    $state = StructureState::where('character_id', $structure->character_id)->where('structure_id', $structure_id)->first();
-    $vul = StructureVul::where('character_id', $structure->character_id)->where('structure_id', $structure_id)->first();
+    $services = StructureService::where('structure_id', $structure_id)->get();
+    $state = StructureState::where('structure_id', $structure_id)->first();
+    $vul = StructureVul::where('structure_id', $structure_id)->first();
 
     return view('structure', compact(['structure', 'services', 'state', 'vul']));
   }
@@ -209,9 +209,8 @@ class StructureController extends Controller
         $state = str_replace("_", " " , $strct->state);
 
         Structure::updateOrCreate(
-          ['structure_id' => $strct->structure_id, 'character_id' => $character->character_id],
+          ['structure_id' => $strct->structure_id],
           ['structure_name' => $unv->name,
-           'user_id' => \Auth::id(),
            'corporation_id' => $character->corporation_id,
            'type_id' => $strct->type_id,
            'type_name' => $type_name,
@@ -227,11 +226,10 @@ class StructureController extends Controller
           )->touch();
 
         
-        $character->structures()->attach($strct->structure_id);
+        $character->structures()->syncWithoutDetaching($strct->structure_id);
 
         $current_services = StructureService::select('name')
                           ->where('structure_id', $strct->structure_id)
-                          ->where('character_id', $character->character_id)
                           ->get();  
 
         if(count($current_services) > 0 && isset($strct->services)) {
@@ -245,14 +243,12 @@ class StructureController extends Controller
             if(!in_array($cs->name, $api_services)) {
               StructureService::where('structure_id', $strct->structure_id)
                                 ->where('name', $cs->name)
-                                ->where('character_id', $character->character_id)
                                 ->delete();
             }
           }
         } elseif(count($current_services) > 0 && !isset($strct->services)) {
             //IF no services are returned, delete them all
             StructureService::where('structure_id', $strct->structure_id)
-                              ->where('character_id', $character->character_id)
                               ->delete();
 
         }
@@ -260,7 +256,7 @@ class StructureController extends Controller
         if(isset($strct->services)) {
           foreach($strct->services as $sr) {
             StructureService::updateOrCreate(
-              ['structure_id' => $strct->structure_id, 'character_id' => $character->character_id],
+              ['structure_id' => $strct->structure_id],
               ['state' => $sr->state,
                'name' => $sr->name]
             )->touch();
@@ -271,7 +267,7 @@ class StructureController extends Controller
         $state_timer_end = isset($strct->state_timer_end) ? str_replace($tz, " ", $strct->state_timer_end) : null;
 
         StructureState::updateOrCreate(
-          ['structure_id' => $strct->structure_id, 'character_id' => $character->character_id],
+          ['structure_id' => $strct->structure_id],
           ['state_timer_start' => $state_timer_start,
            'state_timer_end' => $state_timer_end,
            'state' => $state]
@@ -291,7 +287,7 @@ class StructureController extends Controller
         }
 
         StructureVul::updateOrCreate(
-          ['structure_id' => $strct->structure_id, 'character_id' => $character->character_id],
+          ['structure_id' => $strct->structure_id],
           ['day' => $days[$strct->reinforce_weekday], 'hour' => $strct->reinforce_hour,
            'next_day' => $next_day, 'next_hour' => $next_hour, 'next_reinforce_apply' => $next_apply] 
         )->touch();

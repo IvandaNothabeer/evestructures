@@ -103,7 +103,7 @@
           </tbody>
         </table>
       </div> <!-- close character panel -->
-      @if(isset($structures) && count($structures))
+
       @foreach($characters as $char) <!-- Loop over characters -->
       <div class="panel panel-primary" id="{{$char->character_name}}">
         <div class="panel-heading"><h3 class="panel-title"> <img src="https://imageserver.eveonline.com/Character/{{$char->character_id}}_32.jpg">&nbsp<strong>{{str_replace('_', ' ', $char->character_name)}}</strong> | {{$char->corporation_name}}</h3></div>
@@ -119,9 +119,7 @@
               <th>Fuel</th>
             </tr>
             </thead>
-
-            @foreach($structures as $str) <!-- Loop over structures -->
-            @if($str->character_id == $char->character_id)
+            @foreach($char->structures as $str) <!-- Loop over structures -->
             <tr>
               <td><img src="https://imageserver.eveonline.com/Type/{{$str->type_id}}_32.png"></td>
               <td><a href="{{ url('/home/structure') }}/{{$str->structure_id}}">{{$str->structure_name}}</a></td>
@@ -134,33 +132,13 @@
               <td class="@if($str->fuel_days_left <= 1)one_day @elseif($str->fuel_days_left < 30)thirty_less @elseif($str->fuel_days_left >= 30)thirty_plus @else @endif">{{$str->fuel_time_left}}</td>
               @endif
             </tr>
-            @endif
             @endforeach
           
           </tbody>
         </table>
       </div><!-- close structure panel -->
       @endforeach
-      @else
-      <div class="panel panel-primary">
-        <div class="panel-heading"><h3 class="panel-title">Structures</h3></div>
-        <table class="table table-condensed">
-          <tbody>
-          <thead>
-          <tr>
-            <th></th>
-            <th>Station Name</th>
-            <th>System</th>
-            <th>Fuel</th>
-          </tr>
-          </thead>
-          <tr>
-            <td colspan="4">No structures found</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-      @endif
+
 
     @if(env('APP_ENV') == 'prod')
       @includeIf('google.ads_home')

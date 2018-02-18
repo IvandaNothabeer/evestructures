@@ -12,7 +12,7 @@ class CheckFuel extends Command
      *
      * @var string
      */
-    protected $signature = 'check:fuel';
+    protected $signature = 'check:fuel {options=NULL}';
 
     /**
      * The console command description.

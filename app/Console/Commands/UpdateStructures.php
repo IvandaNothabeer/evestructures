@@ -13,7 +13,7 @@ class UpdateStructures extends Command
      *
      * @var string
      */
-    protected $signature = 'update:structures';
+    protected $signature = 'update:structures {options=NULL}';
 
     /**
      * The console command description.

@@ -34,12 +34,10 @@ class HomeController extends Controller
       $success = $success[0];
       $warning = $warning[0];
 
+      
+      $characters = User::find(auth()->id())->characters()->with('structures')->get(); 
 
-      $characters = User::find(auth()->id())->characters; 
-      $structures = User::find(auth()->id())->structures; 
-
-
-      return view('home', compact(['characters', 'structures', 'alert', 'success', 'warning']));
+      return view('home', compact(['characters', 'alert', 'success', 'warning']));
     }
 
     public function deleteAccount() {

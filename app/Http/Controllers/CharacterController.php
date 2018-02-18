@@ -144,8 +144,7 @@ class CharacterController extends Controller
            'refresh_token' => $tokens->refresh_token,
            'expires' => ($tokens->expires_in + time())
           ]
-        );
-        Character::touch();
+        )->touch;
 
       } catch (\Exception $e) {
         $alert = "We failed to fetch the public data for $verify->CharacterName. ESI may be having problems. Please try again later";
