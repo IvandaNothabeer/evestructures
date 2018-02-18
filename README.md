@@ -146,6 +146,19 @@ php artisan migrate
 php artisan voyager:install
 ```
 
+Details on how to build a BREAD interface are on the voyager website. You can configure the BREAD menus and displays however you wish. 
+
+Note that its a BAD IDEA to delete the default BREAD configuration because that can bread all sorts of unexpected things. 
+Also, for the same reason, be care full deleting menu items.
+
+The standard BREAD view has been modified slightly to make relationships work properly with evestructures. 
+After creating a BREAD, you can create a relationship to a related record. Eg. To Show a Structure Name ....
+- Create a HAS_ONE relationship
+- The relationship is Structures
+- the model is App\Structures
+- Display the structure_name
+- Set the update field to **structure_id**  - this will link the relationship to the correct field in the structure.
+
 ### JSON API
 Added a simple API to return limited information via an API
 - Uses Bearer Token Authentication. So NO, It's not secure! Use https and keep the token secret
@@ -153,4 +166,3 @@ Added a simple API to return limited information via an API
 
 Supported api calls can be found in /routes/api.php
 
-Note, this function is incomplete and duplikcate structures will be returned.
