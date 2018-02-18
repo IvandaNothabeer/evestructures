@@ -49,7 +49,7 @@ Route::get('clonebays', function() {
 });
 
 Route::get('characters', function() {
-    //if ( \Auth::guard('api')->getTokenForRequest() <> env('API_BEARER_TOKEN','')) return response()->json(['error' => 'Not Authorized'], 401);;
+    if ( \Auth::guard('api')->getTokenForRequest() <> env('API_BEARER_TOKEN','')) return response()->json(['error' => 'Not Authorized'], 401);;
 
     // Return a list of Online Clone Bays
     return Character::with('structures')->get();

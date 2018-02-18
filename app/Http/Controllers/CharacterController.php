@@ -28,10 +28,10 @@ class CharacterController extends Controller
     }
     try {
       Character::where('character_id', $character->character_id)->delete();
-      Structure::where('character_id', $character->character_id)->delete();
-      StructureService::where('character_id', $character->character_id)->delete();
-      StructureState::where('character_id', $character->character_id)->delete();
-      StructureVul::where('character_id', $character->character_id)->delete();
+      //Structure::where('character_id', $character->character_id)->delete();
+      //StructureService::where('character_id', $character->character_id)->delete();
+      //StructureState::where('character_id', $character->character_id)->delete();
+      //StructureVul::where('character_id', $character->character_id)->delete();
 
       $client = new Client();
       $authsite = 'https://login.eveonline.com/oauth/revoke';
@@ -52,7 +52,7 @@ class CharacterController extends Controller
 
 
       if(!isset($account_del)) {
-        $success = "Successfully deleted $character->character_name, structures and revoked ESI privileges";
+        $success = "Successfully deleted $character->character_name and revoked ESI privileges";
         return redirect()->to('/home')->with('success', [$success]);
       } else {
         return 1;
@@ -145,6 +145,7 @@ class CharacterController extends Controller
            'expires' => ($tokens->expires_in + time())
           ]
         );
+        Character::touch();
 
       } catch (\Exception $e) {
         $alert = "We failed to fetch the public data for $verify->CharacterName. ESI may be having problems. Please try again later";

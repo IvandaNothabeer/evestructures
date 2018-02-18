@@ -111,7 +111,7 @@ class StructureUpdate implements ShouldQueue
       $current_structures = Structure::select('structure_id')
                             ->where('character_id', $this->character->character_id)
                             ->get();  
-
+      
       $api_structures = array();
       foreach($esi_structures as $s) {
         array_push($api_structures, $s->structure_id);

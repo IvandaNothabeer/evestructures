@@ -38,7 +38,7 @@ class StructureController extends Controller
   public function create($character_id) {
 
     $tz = array("T", "Z");
-    $character = Character::where('user_id', \Auth::id())->where('character_id', $character_id)->first();
+    $character = Character::with('structures')->where('user_id', \Auth::id())->where('character_id', $character_id)->first();
     if(is_null($character)) {
       $alert = "Character not found on this account";
       return redirect()->to('/home')->with('alert', [$alert]);
@@ -51,7 +51,7 @@ class StructureController extends Controller
       if($diff->h < 1) {
         $new_min = (60 - $diff->i);
         $warning = "CCP caches structure data for up to 1 hour. Please try again in $new_min minute(s)";
-        return redirect()->to('/home')->with('warning', [$warning]);
+        //return redirect()->to('/home')->with('warning', [$warning]);
       }
     }
 
@@ -116,16 +116,15 @@ class StructureController extends Controller
       return redirect()->to('/home')->with('alert', [$alert]);
     }
 
-    $current_structures = Structure::select('structure_id')
-                          ->where('character_id', $character->character_id)
-                          ->get();  
-
+    $current_structures = $character->structures();  
+    
     $api_structures = array();
     foreach($esi_structures as $s) {
       array_push($api_structures, $s->structure_id);
     }
 
     //Delete Structures and relations that aren't returned in the API call
+    /*
     foreach($current_structures as $cs) {
       if(!in_array($cs->structure_id, $api_structures)) {
         Structure::where('structure_id', $cs->structure_id)->where('character_id', $character->character_id)->delete();
@@ -134,6 +133,14 @@ class StructureController extends Controller
         StructureVul::where('structure_id', $cs->structure_id)->where('character_id', $character->character_id)->delete();
       }
     }
+    */
+    
+      //Detach Character from Structures that aren't returned in the API call
+      foreach($character->structures as $cs) {
+        if(!in_array($cs->structure_id, $api_structures)) {
+            $character->structures()->detach($cs->structure_id, false);
+        }
+      }
 
     foreach($esi_structures as $strct) {
       $query = '
@@ -217,7 +224,10 @@ class StructureController extends Controller
            'unanchors_at' => $unanchors_at,
            'state' => $state
           ]
-        );
+          )->touch();
+
+        
+        $character->structures()->attach($strct->structure_id);
 
         $current_services = StructureService::select('name')
                           ->where('structure_id', $strct->structure_id)
@@ -253,7 +263,7 @@ class StructureController extends Controller
               ['structure_id' => $strct->structure_id, 'character_id' => $character->character_id],
               ['state' => $sr->state,
                'name' => $sr->name]
-            );
+            )->touch();
           }
         }
         
@@ -265,7 +275,8 @@ class StructureController extends Controller
           ['state_timer_start' => $state_timer_start,
            'state_timer_end' => $state_timer_end,
            'state' => $state]
-        );
+        )->touch();
+
 
         $days = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
         $next_day = null;
@@ -283,7 +294,8 @@ class StructureController extends Controller
           ['structure_id' => $strct->structure_id, 'character_id' => $character->character_id],
           ['day' => $days[$strct->reinforce_weekday], 'hour' => $strct->reinforce_hour,
            'next_day' => $next_day, 'next_hour' => $next_hour, 'next_reinforce_apply' => $next_apply] 
-        );
+        )->touch();
+        
       } catch (ServerException $e ) {
         $alert = "We received a 5xx error from ESI, this usually means an issue on CCP's end, please try again later.";
         //5xx error, usually and issue with ESI

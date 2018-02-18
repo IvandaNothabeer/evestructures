@@ -13,10 +13,10 @@ class CreateCharacterStructurePivotTable  extends Migration
     public function up()
     {
         Schema::create('character_structure', function (Blueprint $table) {
-            $table->integer('character_id')->unsigned()->index();
-            $table->foreign('character_id')->references('id')->on('characters')->onDelete('cascade');
-            $table->integer('structure_id')->unsigned()->index();
-            $table->foreign('structure_id')->references('id')->on('structures')->onDelete('cascade');
+            $table->bigInteger('character_id')->index();
+            //$table->foreign('character_id')->references('character_id')->on('characters')->onDelete('cascade');
+            $table->biginteger('structure_id')->index();
+            //$table->foreign('structure_id')->references('structure_id')->on('structures')->onDelete('cascade');
             $table->primary(['character_id', 'structure_id']);
         });
     }
