@@ -69,7 +69,7 @@ class StructureUpdate implements ShouldQueue
 
             case "refreshed":
                 //Pull down new info from DB
-                $character = App\Character::where('character_id', $this->character->id)->first();
+                $character = \App\Character::where('character_id', $this->character->character_id)->first();
                 break;
 
             default:
