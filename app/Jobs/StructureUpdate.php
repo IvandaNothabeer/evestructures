@@ -307,8 +307,15 @@ class StructureUpdate implements ShouldQueue
                 return redirect()->to('/home')->with('alert', [$alert]);
             }
 
-        } 
-
+        }
+        
+        // Delete any unattached strutures
+        
+        $dead_structures = Structure::doesntHave('characters')->get(); 
+        foreach ($dead_structures as $structure){
+            $structure->delete();
+        }
+        
         $new_fetch = new \DateTime();
         Character::where('character_id', $character->id)->update(['last_fetch' => $new_fetch]);
         $success = "Successfully added/updated structures.";
