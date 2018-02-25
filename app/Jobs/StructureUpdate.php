@@ -311,7 +311,7 @@ class StructureUpdate implements ShouldQueue
         
         // Delete any unattached strutures
         
-        $dead_structures = Structure::doesntHave('characters')->get(); 
+        $dead_structures = Structure::doesntHave('characters')->with(['Services','States','Vuls'])->get(); 
         foreach ($dead_structures as $structure){
             $structure->delete();
         }
