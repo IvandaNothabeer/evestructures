@@ -11,7 +11,9 @@ use App\Structure;
 use App\StructureService;
 use App\StructureState;
 use App\StructureVul;
-
+use App\Slug;
+use App\NotificationManager;
+use Log;
 
 class CharacterController extends Controller
 {
@@ -28,10 +30,6 @@ class CharacterController extends Controller
     }
     try {
       Character::where('character_id', $character->character_id)->delete();
-      //Structure::where('character_id', $character->character_id)->delete();
-      //StructureService::where('character_id', $character->character_id)->delete();
-      //StructureState::where('character_id', $character->character_id)->delete();
-      //StructureVul::where('character_id', $character->character_id)->delete();
 
       $client = new Client();
       $authsite = 'https://login.eveonline.com/oauth/revoke';
@@ -50,6 +48,8 @@ class CharacterController extends Controller
         $result = $client->post($authsite, $token_headers);
       }
 
+      NotificationManager::where('user_id', \Auth::id())->where('character_id', $character_id)->delete();
+      Slug::where('user_id', \Auth::id())->where('character_id', $character_id)->delete();
 
       if(!isset($account_del)) {
         $success = "Successfully deleted $character->character_name and revoked ESI privileges";
@@ -145,9 +145,14 @@ class CharacterController extends Controller
            'expires' => ($tokens->expires_in + time())
           ]
         )->touch;
-
+        
+        Slug::updateOrCreate(
+          ['user_id' => \Auth::id(), 'character_id' => $verify->CharacterID], 
+          ['corporation_id' => $character->corporation_id]
+        );
       } catch (\Exception $e) {
         $alert = "We failed to fetch the public data for $verify->CharacterName. ESI may be having problems. Please try again later";
+        Log::error("Exception caught on public data for $verify->CharacterName: " . $e->getMessage());
         return redirect()->to('/home')->with('alert', [$alert]);
       }
       return redirect()->to('/home'); 
@@ -166,6 +171,7 @@ class CharacterController extends Controller
 
       return "not_expired";
     }
+
     $refresh_token = $entry->refresh_token;
 
     try {
@@ -193,14 +199,17 @@ class CharacterController extends Controller
 
     } catch (ClientException $e) {
       //4xx error, usually encountered when token has been revoked on CCP website
+      Log::error("ClientException caught in token refresh: " . $e->getMessage());
       $alert = "We failed to refresh our access with your tokens. This usually means they were revoked on the CCP API website. Try re-adding your character.";
       return redirect()->to('/home')->with('alert', [$alert]);
     } catch (ServerException $e ) {
+      Log::error("ServerException caught in token refresh: " . $e->getMessage());
       $alert = "We received a 5xx error from ESI, this usually means an issue on CCP's end, pleas try again later.";
       //5xx error, usually and issue with ESI
       return redirect()->to('/home')->with('alert', [$alert]);
     } catch (\Exception $e) {
       //Everything else
+      Log::error("Exception caught in token refresh: " . $e->getMessage());
       $alert = "We failed to refresh your tokens, please try again later.";
       return redirect()->to('/home')->with('alert', [$alert]);
     }

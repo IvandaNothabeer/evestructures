@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/discord', 'HomeController@discord');
+Auth::routes();
 
 Route::get('/', 'WelcomeController@index');
 Route::get('/demo', 'DemoController@index')->name('demo');
@@ -21,7 +21,7 @@ Route::get('/sso/login', function() {
     $authsite = 'https://login.eveonline.com/oauth/authorize';
     $client_id = env('CLIENT_ID');
     $redirect_uri = env('CALLBACK_URL');
-    $scopes = "esi-corporations.read_structures.v1 esi-characters.read_corporation_roles.v1 esi-universe.read_structures.v1";
+    $scopes = "esi-corporations.read_structures.v1 esi-characters.read_corporation_roles.v1 esi-universe.read_structures.v1 esi-industry.read_corporation_mining.v1";
     $state = uniqid();
     session(['auth_state' => $state]);
 
@@ -30,20 +30,30 @@ Route::get('/sso/login', function() {
 
 });
  
+//SSO RELATED//
 Route::get('/sso/callback', 'CharacterController@create');
 Route::get('/fetch/{character_id}', 'StructureController@create');
 
-Auth::routes();
-
+//HOME ROUTES//
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home/notifications', 'NotificationManagerController@index')->name('notifications');
 Route::get('/home/structure/{structure_id}', 'StructureController@show');
+Route::post('/home/structure/{structure_id}', 'StructureController@updateExtraction');
 
+//DELETE ROUTES//
 Route::get('/delete/{character_id}', 'CharacterController@destroy');
 Route::get('/account/delete', 'HomeController@deleteAccount');
 
+//WEBHOOK ROUTES//
 Route::post('/webhook/{character_id}', 'WebhookController@store');
 Route::delete('/webhook/delete/{character_id}', 'WebhookController@destroy');
+Route::post('/webhook/test/{character_id}', 'WebhookController@testDiscord');
 
+//PUBLIC EXTRACTIONS//
+Route::get('/extraction/', 'SlugController@index')->name('extraction');
+Route::get('/extraction/{corporation_id}/{slug}', 'PublicExtraction@index');
+Route::post('/extraction/create/{character_id}', 'SlugController@create');
+Route::delete('/extraction/delete/{character_id}', 'SlugController@destroy');
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
