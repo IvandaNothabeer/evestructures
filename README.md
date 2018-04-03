@@ -3,6 +3,8 @@ This provides a consolidated view of all your structures across multiple Eve Onl
 
 EveStrucutures is built with the Laravel PHP Framework. For more info on [Laravel](https://laravel.com/docs/5.5)
 
+This Fork is built for Alliance Services and adds back end functionality not available on the public evestructures website. All structures registered on the wbsite are visible through the back end toi system administrators and Alliance Structure Managers. There are chages to the top menu bar, Titles and icons are changed In addition there are minor changes to the database structure to make back end administration easier.
+
 ## Donate
 If you liked EveStructures, please consider donating ISK in game to [Brock Khans](https://evewho.com/pilot/Brock+Khans) or [PayPal](paypal.me/skiedude)
 
@@ -15,9 +17,11 @@ If you liked EveStructures, please consider donating ISK in game to [Brock Khans
 
 ### Eve Developers Site
 [Eve Online Developer](https://developers.eveonline.com/) - You will need to setup your own developer application that uses
-* esi-universe.read_structures.v1 
-* esi-corporations.read_structures.v1 
-* esi-characters.read_corporation_roles.v1  
+* esi-universe.read_structures 
+* esi-corporations.read_structures
+* esi-characters.read_corporation_roles
+* esi-industry.read_corporation_mining 
+  
 Set the callback url to 
 ```
 http(s)://your_domain.com/sso/callback
@@ -88,7 +92,7 @@ or SSL
 Run the php artisan migration command to set create your database tables
 ```
 php artisan migrate
-php artisan db:seed   //this fills in all the demo data, not really required for private installs.
+php artisan db:seed   //this fills in all the demo data, Not Required - Demo views are removed in this Fork.
 ```
 
 ### Logs
@@ -137,6 +141,10 @@ php artisan check:fuel //Run the Fuel check and send notifications if required
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
+### SLACK Integration
+Added Support for Slack Integration ....
+- Create a Slack Webhook
+- Add the Webhook URL to the Notifications page
 
 ### Administration Back End
 A Back end is added using tcg/voyager. See here ... https://github.com/the-control-group/voyager
@@ -173,4 +181,3 @@ Added a simple API to return limited information via an API
 - Set the Bearer token in .env
 
 Supported api calls can be found in /routes/api.php
-

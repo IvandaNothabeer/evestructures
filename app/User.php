@@ -29,7 +29,7 @@ class User extends \TCG\Voyager\Models\User
 
 
     public function characters() {
-      return $this->hasMany(Character::class);
+      return $this->hasMany('App\Character','user_id','id');
     }
 
     //public function structures() {

@@ -20,7 +20,7 @@ class Character extends Model
     */
     public function structures()
     {
-        return $this->belongsToMany('App\Structure',null,null,null,'id','structure_id');
+        return $this->belongsToMany('App\Structure',null,null,null,'character_id','structure_id');
     }
 
 }

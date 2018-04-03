@@ -10,7 +10,7 @@ class Structure extends Model
     //
     
     public function characters() {
-      return $this->belongsToMany('App\Character',null,null,null,'structure_id','id');
+      return $this->belongsToMany('App\Character',null,null,null,'structure_id','character_id');
     }
 
     public function services() {

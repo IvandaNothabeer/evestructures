@@ -9,11 +9,14 @@ use App\Notifications\testDiscord;
 
 class WebhookController extends Controller
 {
-
+  
+  //public $regex='nullable|max:225|regex:/(^https:\/\/(canary.)?discordapp.com\/api\/webhooks.*)/';
+  public $regex='nullable|max:225|regex:/(^https:\/\/*)/';
+  
   public function __construct() {
     $this->middleware('auth');
   }
-
+  
   public function store($character_id, Request $request) {
     $character = Character::where('user_id', \Auth::id())->where('character_id', $character_id)->first();
     if(is_null($character)) {
@@ -23,7 +26,7 @@ class WebhookController extends Controller
 
     if(isset($request->fuel_webhook)) {
       $this->validate($request, [
-        'fuel_webhook' => 'nullable|max:225|regex:/(^https:\/\/(canary.)?discordapp.com\/api\/webhooks.*)/',  
+        'fuel_webhook' => $this->regex,  
       ]);
       NotificationManager::updateOrCreate(
         ['user_id' => \Auth::id(), 'character_id' => $character->character_id],
@@ -32,7 +35,7 @@ class WebhookController extends Controller
 
     } elseif(isset($request->state_webhook)) {
       $this->validate($request, [
-        'state_webhook' => 'nullable|max:225|regex:/(^https:\/\/(canary.)?discordapp.com\/api\/webhooks.*)/',  
+        'state_webhook' => $this->regex,  
       ]);
       NotificationManager::updateOrCreate(
         ['user_id' => \Auth::id(), 'character_id' => $character->character_id],
@@ -41,7 +44,7 @@ class WebhookController extends Controller
 
     } elseif(isset($request->unanchor_webhook)) {
       $this->validate($request, [
-        'unanchor_webhook' => 'nullable|max:225|regex:/(^https:\/\/(canary.)?discordapp.com\/api\/webhooks.*)/',  
+        'unanchor_webhook' => $this->regex,  
       ]);
       NotificationManager::updateOrCreate(
         ['user_id' => \Auth::id(), 'character_id' => $character->character_id],
@@ -50,7 +53,7 @@ class WebhookController extends Controller
 
     } elseif(isset($request->extraction_webhook)) {
       $this->validate($request, [
-        'extraction_webhook' => 'nullable|max:225|regex:/(^https:\/\/(canary.)?discordapp.com\/api\/webhooks.*)/',  
+        'extraction_webhook' => $this->regex,  
       ]);
       NotificationManager::updateOrCreate(
         ['user_id' => \Auth::id(), 'character_id' => $character->character_id],
@@ -61,7 +64,7 @@ class WebhookController extends Controller
 
     }
     
-    $success = "Successfully added/updated your Discord Webhook for $character->character_name";
+    $success = "Successfully added/updated your Webhook for $character->character_name";
     return redirect()->to('/home/notifications')->with('success', [$success]);
   }
 
